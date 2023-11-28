@@ -1,0 +1,27 @@
+version: '3'
+services:
+  proxy-socket:
+    image: 192.168.100.17:443/proxy-socket
+    ports:
+      - 5001:5001
+    volumes:
+      - ./proxy/proxy_socket.py:/app/proxy_socket.py
+    environment:
+      - PROXY_ADDR=0.0.0.0
+      - PROXY_PORT=5001
+      - SERVER_ADDR=192.168.100.17
+      - SERVER_PORT=5002
+    stdin_open: true
+    tty: true
+  client-socket:
+    image: 192.168.100.17:443/client-socket
+    volumes:
+      - ./client/client_socket.py:/app/client_socket.py
+    environment:
+      - PROXY_ADDR=proxy-socket
+      - PROXY_PORT=5001
+    depends_on:
+      - proxy-socket
+    stdin_open: true
+    tty: true
+    
